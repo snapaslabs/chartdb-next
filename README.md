@@ -111,25 +111,25 @@ Enables live multi-user cursors and diagram sync. Requires a [Liveblocks](https:
 ## Docker
 
 ```bash
-# Run with defaults (no backend)
-docker run -p 3000:3000 chartdb
-
-# Run with all features
-docker run \
-  -e NEXT_PUBLIC_OPENAI_API_KEY=<key> \
-  -e NEXT_PUBLIC_SUPABASE_URL=<url> \
-  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=<key> \
-  -e SUPABASE_SERVICE_ROLE_KEY=<key> \
-  -e NEXT_PUBLIC_LIVEBLOCKS_ENABLED=true \
-  -e LIVEBLOCKS_SECRET_KEY=<sk_...> \
-  -p 3000:3000 chartdb
-```
-
-#### Build locally
-
-```bash
+# No backend — local storage only
 docker build -t chartdb .
 docker run -p 3000:3000 chartdb
+```
+
+`NEXT_PUBLIC_*` variables are baked into the client bundle at build time and must be passed as `--build-arg`. Server-side secrets are injected at runtime with `-e`.
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_OPENAI_API_KEY=<key> \
+  --build-arg NEXT_PUBLIC_SUPABASE_URL=<url> \
+  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key> \
+  --build-arg NEXT_PUBLIC_LIVEBLOCKS_ENABLED=true \
+  -t chartdb .
+
+docker run \
+  -e SUPABASE_SERVICE_ROLE_KEY=<service-key> \
+  -e LIVEBLOCKS_SECRET_KEY=<sk_...> \
+  -p 3000:3000 chartdb
 ```
 
 ---
