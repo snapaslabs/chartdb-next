@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { Button } from '@/components/button/button';
 import { DiagramIcon } from '@/components/diagram-icon/diagram-icon';
 import {
@@ -52,7 +52,9 @@ export const OpenDiagramDialog: React.FC<OpenDiagramDialogProps> = ({
         const diagrams = await listDiagrams({ includeTables: true });
         setDiagrams(
             diagrams.sort(
-                (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+                (a, b) =>
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
             )
         );
     }, [listDiagrams]);
