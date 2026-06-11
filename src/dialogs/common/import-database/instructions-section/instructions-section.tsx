@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useMemo } from 'react';
 import logo from '@/assets/logo-2.png';
 import { ToggleGroup, ToggleGroupItem } from '@/components/toggle/toggle-group';
@@ -160,7 +160,7 @@ export const InstructionsSection: React.FC<InstructionsSectionProps> = ({
                             className="h-6 gap-1 p-0 px-2 shadow-none data-[state=on]:bg-slate-200 dark:data-[state=on]:bg-slate-700"
                         >
                             <Avatar className="h-3 w-4 rounded-none">
-                                <AvatarImage src={logo} alt="query" />
+                                <AvatarImage src={logo.src} alt="query" />
                                 <AvatarFallback>Query</AvatarFallback>
                             </Avatar>
                             Smart Query

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
     HoverCard,
     HoverCardContent,
@@ -93,7 +93,7 @@ export const SSMSInfo = React.forwardRef<
                             )}
                         </p>
                         <div className="flex items-center pt-2">
-                            <ZoomableImage src={SSMSInstructions} />
+                            <ZoomableImage src={SSMSInstructions.src} />
                         </div>
                     </div>
                 </div>

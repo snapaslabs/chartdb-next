@@ -82,11 +82,11 @@ Enables the AI-powered DDL export and schema assistant. Set **one** of the follo
 
 Enables user accounts, cloud diagram persistence, and diagram sharing. Requires a [Supabase](https://supabase.com) project.
 
-| Variable | Description |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous (public) key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key — used only in API routes for collaborator writes |
+| Variable                        | Description                                                        |
+| ------------------------------- | ------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Your Supabase project URL                                          |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous (public) key                                    |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Service role key — used only in API routes for collaborator writes |
 
 After creating your Supabase project, run [`supabase-schema.sql`](./supabase-schema.sql) in the Supabase Dashboard → SQL Editor.
 
@@ -94,42 +94,62 @@ After creating your Supabase project, run [`supabase-schema.sql`](./supabase-sch
 
 Enables live multi-user cursors and diagram sync. Requires a [Liveblocks](https://liveblocks.io) account **and** Supabase auth to be configured.
 
-| Variable | Description |
-|---|---|
-| `NEXT_PUBLIC_LIVEBLOCKS_ENABLED` | Set to `true` to enable realtime features |
-| `LIVEBLOCKS_SECRET_KEY` | Liveblocks secret key (`sk_...`) from your dashboard |
+| Variable                         | Description                                          |
+| -------------------------------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_LIVEBLOCKS_ENABLED` | Set to `true` to enable realtime features            |
+| `LIVEBLOCKS_SECRET_KEY`          | Liveblocks secret key (`sk_...`) from your dashboard |
 
 ### Other
 
-| Variable | Description |
-|---|---|
-| `NEXT_PUBLIC_APP_URL` | Public URL of your deployment (used for share links) |
-| `NEXT_PUBLIC_DISABLE_ANALYTICS` | Set to `true` to disable Fathom Analytics |
+| Variable                        | Description                                          |
+| ------------------------------- | ---------------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`           | Public URL of your deployment (used for share links) |
+| `NEXT_PUBLIC_DISABLE_ANALYTICS` | Set to `true` to disable Fathom Analytics            |
 
 ---
 
 ## Docker
 
-```bash
-# No backend — local storage only
-docker build -t chartdb .
-docker run -p 3000:3000 chartdb
+The pre-built image on `ghcr.io` supports **full runtime configuration** — no rebuild needed. All `NEXT_PUBLIC_*` variables are injected at container startup via `docker-entrypoint.sh`, which writes them into `public/config.js` so the browser picks them up through `window.env`.
+
+#### Using the pre-built image (recommended)
+
+```yaml
+# docker-compose.yml
+services:
+    chartdb:
+        image: ghcr.io/snapaslabs/chartdb-next:latest
+        restart: always
+        ports:
+            - '8080:8080'
+        environment:
+            # AI — pick one provider
+            - NEXT_PUBLIC_OPENAI_API_KEY=<your-key>
+            # - NEXT_PUBLIC_ANTHROPIC_API_KEY=<your-key>
+
+            # Auth & cloud storage (optional)
+            - NEXT_PUBLIC_SUPABASE_URL=<your-url>
+            - NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+            - SUPABASE_SERVICE_ROLE_KEY=<your-service-key>
+
+            # Realtime collaboration (optional, requires Supabase)
+            - NEXT_PUBLIC_LIVEBLOCKS_ENABLED=true
+            - LIVEBLOCKS_SECRET_KEY=<sk_...>
 ```
 
-`NEXT_PUBLIC_*` variables are baked into the client bundle at build time and must be passed as `--build-arg`. Server-side secrets are injected at runtime with `-e`.
+> `SUPABASE_SERVICE_ROLE_KEY` and `LIVEBLOCKS_SECRET_KEY` are server-side only and are never exposed to the browser.
+
+#### Build locally
 
 ```bash
-docker build \
-  --build-arg NEXT_PUBLIC_OPENAI_API_KEY=<key> \
-  --build-arg NEXT_PUBLIC_SUPABASE_URL=<url> \
-  --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key> \
-  --build-arg NEXT_PUBLIC_LIVEBLOCKS_ENABLED=true \
-  -t chartdb .
-
-docker run \
-  -e SUPABASE_SERVICE_ROLE_KEY=<service-key> \
+docker build -t chartdb .
+docker run -p 8080:8080 \
+  -e NEXT_PUBLIC_SUPABASE_URL=<url> \
+  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=<key> \
+  -e SUPABASE_SERVICE_ROLE_KEY=<key> \
+  -e NEXT_PUBLIC_LIVEBLOCKS_ENABLED=true \
   -e LIVEBLOCKS_SECRET_KEY=<sk_...> \
-  -p 3000:3000 chartdb
+  chartdb
 ```
 
 ---

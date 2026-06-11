@@ -23,9 +23,12 @@ export const HIDE_CHARTDB_CLOUD: boolean =
 export const DISABLE_ANALYTICS: boolean =
     (windowEnv?.DISABLE_ANALYTICS ??
         process.env.NEXT_PUBLIC_DISABLE_ANALYTICS) === 'true';
-export const SUPABASE_URL: string = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+export const SUPABASE_URL: string =
+    (windowEnv?.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL) ?? '';
 export const SUPABASE_ANON_KEY: string =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+    (windowEnv?.SUPABASE_ANON_KEY ??
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ?? '';
+// Server-side only — never exposed to the browser via window.env
 export const SUPABASE_SERVICE_ROLE_KEY: string =
     process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 
@@ -35,4 +38,5 @@ export const SUPABASE_CONFIGURED: boolean = !!(
     SUPABASE_URL && SUPABASE_ANON_KEY
 );
 export const LIVEBLOCKS_ENABLED: boolean =
-    process.env.NEXT_PUBLIC_LIVEBLOCKS_ENABLED === 'true';
+    (windowEnv?.LIVEBLOCKS_ENABLED ??
+        process.env.NEXT_PUBLIC_LIVEBLOCKS_ENABLED) === 'true';
